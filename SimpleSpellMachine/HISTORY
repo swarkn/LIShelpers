@@ -1,0 +1,15 @@
+26.12.2016 - prototype II
+- added github octicon icons
+    - added an editing icon at position < A OR > Z
+    - replaced left/right texts with icons
+- better resize ability
+- added a scrollbar for the text widget with focus
+- some code refactoring (still learning how to code Python)
+- added a HISTORY file for SimpleSpellmachine
+
+21.12.2016 - First version of the simple spell machine
+- use of a config file
+- ABC scrolls automatically
+- letter can be clicked by touch or mouse
+- manually browse through ABC by clicking left or right buttons
+- text widget shows last clicked letters

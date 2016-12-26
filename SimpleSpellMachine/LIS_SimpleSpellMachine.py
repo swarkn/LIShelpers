@@ -5,6 +5,7 @@ import LISconfig
 
 # gfx usage, abc & strings, etc.
 import tkinter as tk
+from PIL import ImageTk
 import string
 
 class frameSpelling:
@@ -13,7 +14,7 @@ class frameSpelling:
         self.frame = tk.Frame(self.master)
 
         # define class variables
-        self.intSpellPointer = 0
+        self.intSpellPointer = -1
         self.idFrameAfterEvent = 0
 
         # set fullscreen & resolution
@@ -24,27 +25,39 @@ class frameSpelling:
         else:
             self.master.geometry(LISconfig.strScreenGeometry)
 
-        # create button left
-        self.frame.btnLeft = tk.Button(text ="left", command = self.buttonPressLeft)
-        self.frame.btnLeft.pack()
-        self.frame.btnLeft.place(relx=0.0, rely=0.0, relheight=0.7, relwidth=0.3)
-        # create button right
-        self.frame.btnRight = tk.Button(text ="right", command = self.buttonPressRight)
-        self.frame.btnRight.pack()
-        self.frame.btnRight.place(relx=0.7, rely=0.0, relheight=0.7, relwidth=0.3)
-        # create txt widget
-        self.frame.txt = tk.Text(font=("Helvetica",32))
-        self.frame.txt.pack()
-        self.frame.txt.place(relx=0.0, rely=0.7, relheight=0.3, relwidth=1.0)
-        # create txt lable and bindings
-        self.frame.lableText = tk.StringVar()
-        self.frame.lable = tk.Label(master, textvariable=self.frame.lableText, font=("Helvetica",90))
-        self.frame.lable.bind("<Button-1>",self.LableMouseClickLeft)
-        self.frame.lable.pack()
-        self.frame.lable.place(relx=0.3, rely=0.0, relheight=0.7, relwidth=0.4)
+        # create Window contents
+        self.windowConfigure(self.frame)
 
-        # set up frame and update hook
-        self.frame.pack()
+    def windowConfigure(self, frame):
+        # load images
+        self.rawicon_ArrowLeft = ImageTk.Image.open(LISconfig.strImage_ArrowLeft)
+        self.rawicon_ArrowRight = ImageTk.Image.open(LISconfig.strImage_ArrowRight)
+        self.rawicon_menu = ImageTk.Image.open(LISconfig.arrMenu[0][1])
+        # create button left
+        frame.btnLeft = tk.Button(text ="left", relief='flat', command = self.buttonPressLeft)
+        frame.btnLeft.pack()
+        frame.btnLeft.place(relx=0.0, rely=0.0, relheight=0.7, relwidth=0.3)
+        # create button right
+        frame.btnRight = tk.Button(text ="right", relief='flat', command = self.buttonPressRight)
+        frame.btnRight.pack()
+        frame.btnRight.place(relx=0.7, rely=0.0, relheight=0.7, relwidth=0.3)
+        # create txt widget
+        frame.txt = tk.Text(wrap='none',font=("Helvetica",32))
+        frame.txt.pack()
+        frame.txt.place(relx=0.0, rely=0.7, relheight=0.3, relwidth=1.0)
+        # create scrollbar
+        frame.scrollbar=tk.Scrollbar(self.frame.txt, orient='horizontal')
+        frame.txt.configure(xscrollcommand=self.frame.scrollbar.set)
+        frame.scrollbar.pack(side='bottom', fill='x')
+        frame.scrollbar.config(command=self.frame.txt.xview)
+        # create txt label and bindings
+        frame.labelText = tk.StringVar()
+        frame.label = tk.Label(self.master, textvariable=self.frame.labelText, font=("Helvetica",90))
+        frame.label.bind("<Button-1>",self.labelMouseClickLeft)
+        frame.label.pack()
+        frame.label.place(relx=0.3, rely=0.0, relheight=0.7, relwidth=0.4)
+        # setup frame and update hook
+        frame.pack()
         self.idFrameAfterEvent = self.frame.after(0, self.update_text, self.intSpellPointer, False)
         # set up root bindings
         self.master.bind("<Configure>", self.windowReconfigure)
@@ -53,36 +66,64 @@ class frameSpelling:
     def windowReconfigure(self,event):
         print(event.width,event.height)
 
-        # resize lable font
-        intLableWidth = self.frame.lable.winfo_width()
-        intLableHeight = self.frame.lable.winfo_height()
-        intLableFontSize = 0
+        # resize label font
+        intlabelWidth = self.frame.label.winfo_width()
+        intlabelHeight = self.frame.label.winfo_height()
+        intlabelFontSize = 0
         # going into negative values is px size
-        if intLableHeight > intLableWidth:
-            intLableFontSize = intLableHeight - intLableHeight * 2
+        if intlabelHeight > intlabelWidth:
+            intlabelFontSize = intlabelHeight - intlabelHeight * 2
         else:
-            intLableFontSize = intLableWidth - intLableWidth * 2
-        self.frame.lable.config(font=("Helvetica", intLableFontSize))
+            intlabelFontSize = intlabelWidth - intlabelWidth * 2
+        self.frame.label.config(font=("Helvetica", intlabelFontSize))
 
         # resize text widget size
         intTextWidth = self.frame.txt.winfo_width()
         intTextHeight = self.frame.txt.winfo_height()
         intTextFontSize = 0
-        # going into negative values is px size
-        intTextFontSize = intTextHeight - intTextHeight * 2
+        # going into negative values is px size (minus 20px because of the scrollbar)
+        intTextFontSize = (intTextHeight - intTextHeight * 2) + 20
         self.frame.txt.config(font=("Helvetica", intTextFontSize))
 
+        #resize images to frame size (need to find a better way to do so)
+        # menu image
+        tmpRatio = self.getRatio(self.frame.label, self.rawicon_menu)
+        tmpimg = self.rawicon_menu.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
+        self.icon_menu = ImageTk.PhotoImage(tmpimg)
+        # arrow left
+        tmpRatio = self.getRatio(self.frame.btnLeft, self.rawicon_ArrowLeft)
+        tmpimg = self.rawicon_ArrowLeft.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
+        self.icon_ArrowLeft = ImageTk.PhotoImage(tmpimg)
+        self.frame.btnLeft.configure(image = self.icon_ArrowLeft)
+        # arrow right
+        tmpRatio = self.getRatio(self.frame.btnRight, self.rawicon_ArrowRight)
+        tmpimg = self.rawicon_ArrowRight.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
+        self.icon_ArrowRight = ImageTk.PhotoImage(tmpimg)
+        self.frame.btnRight.configure(image = self.icon_ArrowRight)
+
+    # calculate the ratio for images on widgets
+    def getRatio(self, Widget, RawImage):
+        intWidthRatio = RawImage.size[0] / Widget.winfo_width()
+        intHeightRatio = RawImage.size[1] / Widget.winfo_height()
+        intImageRatio = max(intWidthRatio, intHeightRatio)
+        return (int(RawImage.size[0] / intImageRatio), int(RawImage.size[1] / intImageRatio))
+
     # function to write the letters to the screen
-    def update_text(self,i, bolManual, event = None):
+    def update_text(self, i, bolManual, event = None):
         # auto move pointer forward if auto called by frame after event
         if not bolManual: i += 1
 
         # correct automatic and manual pointer jumping
-        if i < 0: i = len(LISconfig.strABC) - 1
-        if i > len(LISconfig.strABC) - 1: i = 0
+        if i < -1: i = len(LISconfig.strABC) - 1
+        if i > len(LISconfig.strABC) - 1: i = -1
 
-        # update text in lable
-        self.frame.lableText.set(arrABC[i])
+        # update text in label (-1 is Menue)
+        if not i == -1:
+            self.frame.label.configure(image='')
+            self.frame.labelText.set(LISconfig.arrABC[i])
+        else:
+            self.frame.labelText.set(LISconfig.arrMenu[0][0])
+            self.frame.label.configure(image=self.icon_menu)
 
         # save global pointer state
         self.intSpellPointer = i
@@ -106,8 +147,8 @@ class frameSpelling:
         # call function manually not by event
         self.update_text(self.intSpellPointer, True)
 
-    def LableMouseClickLeft(self, event=None):
-        chrLetterPressed = self.frame.lableText.get()
+    def labelMouseClickLeft(self, event=None):
+        chrLetterPressed = self.frame.labelText.get()
         print("letter pressed: ", chrLetterPressed)
         self.frame.txt.insert('end', chrLetterPressed)
         self.frame.txt.see('end')
@@ -117,14 +158,6 @@ def main():
     root = tk.Tk()
     app = frameSpelling(root)
     root.mainloop()
-
-# load letters into array arrABC[]
-arrABC = []
-arrABC.extend(range(0,len(LISconfig.strABC) + 1))
-intCount = 0
-for charLetter in LISconfig.strABC:
-    arrABC[intCount] = charLetter
-    intCount += 1
 
 if __name__ == '__main__':
     main()
