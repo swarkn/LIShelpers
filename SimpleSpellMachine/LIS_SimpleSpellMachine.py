@@ -25,7 +25,18 @@ class frameSpelling:
         else:
             self.master.geometry(LISconfig.strScreenGeometry)
 
-        # create Window contents
+        # create keyboard bindings
+        master.bind('<Left>', self.buttonPressLeft)
+        master.bind('<Right>', self.buttonPressRight)
+        master.bind('<Return>', self.labelMouseClickLeft)
+        master.bind('<space>', self.keypressSpace)              # space = new_word
+        master.bind('<BackSpace>', self.keypressBackspace)      # BackSpace = del_letter
+        master.bind('<Delete>', self.keypressDelete)            # Delete = del_word
+        master.bind('<Home>', self.keypressHome)                # Home = del_sentance
+        master.bind('<End>', self.keypressEnd)                  # End = send_sentance
+        master.bind('<Escape>', self.keypressEscape)            # Escape = Exit
+
+        # create initial Window with contents
         self.windowConfigure(self.frame)
 
     def windowConfigure(self, frame):
@@ -130,6 +141,40 @@ class frameSpelling:
         print('pointer=', self.intSpellPointer, 'bolManual=', bolManual)
         # set up Frame After Event
         self.idFrameAfterEvent = self.frame.after(LISconfig.intLettersInterval, self.update_text, self.intSpellPointer, False)
+
+    def keypressBackspace(self, event = None):
+        # delete the last character
+        print('key pressed: backspace')
+        self.frame.txt.delete('end-2c')
+
+    def keypressSpace(self, event = None):
+        # new word / space between the words
+        print('key pressed: space')
+        self.frame.labelText.set(' ')
+        self.labelMouseClickLeft(self)
+
+    def keypressDelete(self, event = None):
+        # delete the last word
+        print('key pressed: delete')
+        tmpText = self.frame.txt.get('0.0', 'end')
+        self.keypressHome(self)
+        if tmpText.count(' ') > 0:
+            tmpDelWord = tmpText.rsplit(' ', 1)
+            tmpDelWord[0] = tmpDelWord[0].rstrip()
+            self.frame.txt.insert('0.0', tmpDelWord[0])
+
+    def keypressHome(self, event = None):
+        # delete the complete sentance
+        print('key pressed: home')
+        self.frame.txt.delete('0.0', 'end')
+
+    def keypressEnd(self, event = None):
+        # send the sentance
+        print('key pressed: end')
+
+    def keypressEscape(self, event = None):
+        # escape application
+        print('key pressed: escape')
 
     def buttonPressLeft(self, event = None):
         # stop Frame After Event
