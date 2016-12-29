@@ -4,9 +4,13 @@
 import LISconfig
 
 # gfx usage, abc & strings, etc.
-import tkinter as tk
-from PIL import ImageTk
+import os
 import string
+import tkinter as tk
+import pyglet
+import time
+from PIL import ImageTk
+from gtts import gTTS
 
 class frameSpelling:
     def __init__(self, master):
@@ -132,9 +136,14 @@ class frameSpelling:
         if not i == -1:
             self.frame.label.configure(image='')
             self.frame.labelText.set(LISconfig.arrABC[i])
+            if LISconfig.gTTSenable: self.gttsPlayer(LISconfig.arrABC[i], False)
         else:
-            self.frame.labelText.set(LISconfig.arrMenu[0][0])
+            tmpMenueEntry = '#ME'
+            self.frame.labelText.set(tmpMenueEntry)
+            tmpMenuEntryIndex = LISconfig.arrMenu[0].index(tmpMenueEntry)
+            # better ways to do this?
             self.frame.label.configure(image=self.icon_menu)
+            if LISconfig.gTTSenable: self.gttsPlayer(LISconfig.arrMenu[tmpMenuEntryIndex][0], False)
 
         # save global pointer state
         self.intSpellPointer = i
@@ -145,17 +154,28 @@ class frameSpelling:
     def keypressBackspace(self, event = None):
         # delete the last character
         print('key pressed: backspace')
+        tmpMenueEntry = '#DL'
+        self.frame.labelText.set(tmpMenueEntry)
+        if LISconfig.gTTSenable:
+            self.gttsPlayer(tmpMenueEntry, True)
         self.frame.txt.delete('end-2c')
 
     def keypressSpace(self, event = None):
         # new word / space between the words
         print('key pressed: space')
-        self.frame.labelText.set(' ')
+        tmpMenueEntry = ' '
+        self.frame.labelText.set(tmpMenueEntry)
+        if LISconfig.gTTSenable:
+            self.gttsPlayer(tmpMenueEntry, True)
         self.labelMouseClickLeft(self)
 
     def keypressDelete(self, event = None):
         # delete the last word
         print('key pressed: delete')
+        tmpMenueEntry = '#DW'
+        self.frame.labelText.set(tmpMenueEntry)
+        if LISconfig.gTTSenable:
+            self.gttsPlayer(tmpMenueEntry, True)
         tmpText = self.frame.txt.get('0.0', 'end')
         self.keypressHome(self)
         if tmpText.count(' ') > 0:
@@ -166,11 +186,22 @@ class frameSpelling:
     def keypressHome(self, event = None):
         # delete the complete sentance
         print('key pressed: home')
+        tmpMenueEntry = '#DS'
+        self.frame.labelText.set(tmpMenueEntry)
+        if LISconfig.gTTSenable:
+            self.gttsPlayer(tmpMenueEntry, True)
         self.frame.txt.delete('0.0', 'end')
 
     def keypressEnd(self, event = None):
         # send the sentance
         print('key pressed: end')
+        tmpMenueEntry = '#SS'
+        self.frame.labelText.set(tmpMenueEntry)
+        if LISconfig.gTTSenable:
+            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(self.frame.txt.get('0.0', 'end'), True)
+        # delete sentance in textfield
+        self.keypressHome()
 
     def keypressEscape(self, event = None):
         # escape application
@@ -199,7 +230,48 @@ class frameSpelling:
         self.frame.txt.see('end')
         self.frame.txt.update_idletasks()
 
+    # Calls gTTS and plays the output
+    def gttsPlayer(self, strText, bolSleep, Event=None):
+        # check cache if audio was downloaded before
+        gTTScachefile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + strText + '.mp3'
+        if os.path.exists(gTTScachefile):
+            # use file in cache
+            gTTScache = pyglet.media.load(gTTScachefile, streaming=False)
+        else:
+            # download to cache
+            tmpgTTS = gTTS(text=strText, lang=LISconfig.gTTSlanguage)
+            tmpFile = LISconfig.gTTStempFolder + '_last.mp3'
+            tmpgTTS.save(tmpFile)
+            gTTScache = pyglet.media.load(tmpFile, streaming=False)
+        # play resource with or without sleep
+        gTTScache.play()
+        if bolSleep: time.sleep(gTTScache.duration)
+
+def gttsDownload():
+    if not os.path.exists(LISconfig.gTTStempFolder): os.makedirs(LISconfig.gTTStempFolder)
+    # letters
+    for charLetter in LISconfig.strABC:
+        tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + charLetter + '.mp3'
+        # download only if new
+        if not os.path.exists(tmpFile):
+            print('gTTS cache, creating: ' + tmpFile)
+            tmpgTTS = gTTS(text=charLetter, lang=LISconfig.gTTSlanguage)
+            tmpgTTS.save(tmpFile)
+    # menue entries
+    for arrMenueEntry in LISconfig.arrMenu:
+        tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '.mp3'
+        # download only if new
+        if not os.path.exists(tmpFile):
+            print('gTTS cache, creating: ' + tmpFile)
+            tmpgTTS = gTTS(text=arrMenueEntry[2], lang=LISconfig.gTTSlanguage)
+            tmpgTTS.save(tmpFile)
+
 def main():
+
+    # Do some preparation stuff
+    # gTTS pre-downloading
+    if LISconfig.gTTSenable: gttsDownload()
+
     root = tk.Tk()
     app = frameSpelling(root)
     root.mainloop()

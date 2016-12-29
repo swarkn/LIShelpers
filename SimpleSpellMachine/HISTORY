@@ -1,10 +1,17 @@
+
+29.12.2916 - gTTS
+- added gTTS & pyglet (avbin) support
+* extended LISconfig for gTTS
+* created caching mechanism for voice data
+- added missing icon for "send_sentance"
+
 28.12.2016 - keyboard bindings
 - keyboard bindings (left, right, return, space, backspace, home, end, delete, escape) for editing
 
 26.12.2016 - prototype II
 - added github octicon icons
-    - added an editing icon at position < A OR > Z
-    - replaced left/right texts with icons
+* added an editing icon at position < A OR > Z
+* replaced left/right texts with icons
 - better resize ability
 - added a scrollbar for the text widget with focus
 - some code refactoring (still learning how to code Python)

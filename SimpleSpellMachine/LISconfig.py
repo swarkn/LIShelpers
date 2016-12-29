@@ -23,11 +23,17 @@ intLettersInterval = 1000
 strImage_ArrowLeft = 'icons/arrow_left.png'
 strImage_ArrowRight = 'icons/arrow_right.png'
 
+# gTTS Environment
+gTTSenable = True
+gTTStempFolder = 'cache/'
+gTTSlanguage = 'de'
+
 # editing menue (0 is allways the Menue)
 arrMenu = [
-    ['ME', 'icons/menu.png'],
-    ['NW', 'icons/new_word.png'],
-    ['DL', 'icons/del_letter.png'],
-    ['DW', 'icons/del_word.png'],
-    ['DS', 'icons/del_sentance.png']
+    ['#ME', 'icons/menu.png', 'Menü'],
+    [' ', 'icons/new_word.png', 'Neues Wort'],
+    ['#DL', 'icons/del_letter.png', 'letzter Buchstabe gelöscht'],
+    ['#DW', 'icons/del_word.png', 'letzes Wort gelöscht'],
+    ['#DS', 'icons/del_sentance.png', 'gesamter Satz gelöscht'],
+    ['#SS', 'icons/send_sentance.png', 'ich sage']
 ]
