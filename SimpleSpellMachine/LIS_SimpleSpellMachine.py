@@ -6,7 +6,6 @@ import tkinter as tk
 from PIL import ImageTk
 from gtts import gTTS
 import pyglet
-import numpy
 
 # import LIS configuration
 import LISconfig

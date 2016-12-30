@@ -1,3 +1,7 @@
+30.12.2016
+- removed numpy. Not necessary anymore.
+- added proper formated README.md
+
 30.12.2016 - Menue & more
 - show menue icons if hotkey is pressed
 - image resizing changed to dynamic image array
