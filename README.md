@@ -45,7 +45,7 @@ Install the binary package of AVbin by downloading and running the [setup file][
 
 Hint: to get AVbin work properly on Windows 10, copy the files AVbin.dll and/or AVbin64.dll from your Windows/system32 folder into your Windows/WinSxS folder.
 
-Download the latest [source code](C:\Users\thema_000\Downloads\LIShelpers-master.zip\LIShelpers-master\SimpleSpellMachine) of the LIShelpers as a zip file and extract it onto you computer. Go inside the folder "LIShelpers-master/SimpleSpellMachine" and double-click "LIS_SimpleSpellMachine.py" to start the SimpleSpellMachine. The first time you'll start the tool, a cache will be build up to fasten up the application. To configure the SimpleSpellMachine, take a look at the file LISconfig.py and feel free to edit the variables to your needs.
+Download the latest [source code](https://github.com/swarkn/LIShelpers/archive/master.zip) of the LIShelpers as a zip file and extract it onto you computer. Go inside the folder "LIShelpers-master/SimpleSpellMachine" and double-click "LIS_SimpleSpellMachine.py" to start the SimpleSpellMachine. The first time you'll start the tool, a cache will be build up to fasten up the application. To configure the SimpleSpellMachine, take a look at the file LISconfig.py and feel free to edit the variables to your needs.
 
 ##### Install LIShelpers on Linux
 
