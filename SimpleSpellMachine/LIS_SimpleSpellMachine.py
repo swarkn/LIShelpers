@@ -1,16 +1,15 @@
 #!/usr/bin/python3
 
-# import configuration
-import LISconfig
-
 # gfx usage, abc & strings, etc.
-import os
-import string
+import os, string, time, datetime
 import tkinter as tk
-import pyglet
-import time
 from PIL import ImageTk
 from gtts import gTTS
+import pyglet
+import numpy
+
+# import LIS configuration
+import LISconfig
 
 class frameSpelling:
     def __init__(self, master):
@@ -24,7 +23,7 @@ class frameSpelling:
         # set fullscreen & resolution
         self.master.overrideredirect(LISconfig.bolScreenFull)
         if not LISconfig.strScreenGeometry:
-            strScreenGeometry = str(self.winfo_screenwidth()) + "x" + str(self.winfo_screenheight())
+            strScreenGeometry = str(self.master.winfo_screenwidth()) + "x" + str(self.master.winfo_screenheight())
             self.master.geometry(strScreenGeometry)
         else:
             self.master.geometry(LISconfig.strScreenGeometry)
@@ -47,7 +46,10 @@ class frameSpelling:
         # load images
         self.rawicon_ArrowLeft = ImageTk.Image.open(LISconfig.strImage_ArrowLeft)
         self.rawicon_ArrowRight = ImageTk.Image.open(LISconfig.strImage_ArrowRight)
-        self.rawicon_menu = ImageTk.Image.open(LISconfig.arrMenu[0][1])
+        # load menu images
+        self.rawMenuIcons = []
+        for strIconFile in LISconfig.arrMenu:
+            self.rawMenuIcons.append(ImageTk.Image.open(strIconFile[1]))
         # create button left
         frame.btnLeft = tk.Button(text ="left", relief='flat', command = self.buttonPressLeft)
         frame.btnLeft.pack()
@@ -79,7 +81,7 @@ class frameSpelling:
 
     # function to resize window contents if root window was resized
     def windowReconfigure(self,event):
-        print(event.width,event.height)
+        logConsole('width=',event.width, 'height=', event.height)
 
         # resize label font
         intlabelWidth = self.frame.label.winfo_width()
@@ -100,11 +102,14 @@ class frameSpelling:
         intTextFontSize = (intTextHeight - intTextHeight * 2) + 20
         self.frame.txt.config(font=("Helvetica", intTextFontSize))
 
-        #resize images to frame size (need to find a better way to do so)
-        # menu image
-        tmpRatio = self.getRatio(self.frame.label, self.rawicon_menu)
-        tmpimg = self.rawicon_menu.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
-        self.icon_menu = ImageTk.PhotoImage(tmpimg)
+        #resize images to frame size
+        # menu images
+        self.MenuIcons = []
+        for self.binRawImage in self.rawMenuIcons:
+            tmpRatio = self.getRatio(self.frame.label, self.binRawImage)
+            tmpimg = self.binRawImage.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
+            self.MenuIcons.append(ImageTk.PhotoImage(tmpimg))
+
         # arrow left
         tmpRatio = self.getRatio(self.frame.btnLeft, self.rawicon_ArrowLeft)
         tmpimg = self.rawicon_ArrowLeft.resize(tmpRatio, ImageTk.Image.ANTIALIAS)
@@ -136,82 +141,102 @@ class frameSpelling:
         if not i == -1:
             self.frame.label.configure(image='')
             self.frame.labelText.set(LISconfig.arrABC[i])
-            if LISconfig.gTTSenable: self.gttsPlayer(LISconfig.arrABC[i], False)
+            if LISconfig.gTTSenable:
+                if not LISconfig.gTTSdeactivateSpelling:
+                    self.gttsPlayer(LISconfig.arrABC[i], False)
         else:
+            # show menue item (for the case only "yes" is possible)
             tmpMenueEntry = '#ME'
             self.frame.labelText.set(tmpMenueEntry)
-            tmpMenuEntryIndex = LISconfig.arrMenu[0].index(tmpMenueEntry)
-            # better ways to do this?
-            self.frame.label.configure(image=self.icon_menu)
-            if LISconfig.gTTSenable: self.gttsPlayer(LISconfig.arrMenu[tmpMenuEntryIndex][0], False)
+            tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, tmpMenueEntry)
+            self.frame.label.configure(image=self.MenuIcons[tmpMenuEntryIndex])
+            if LISconfig.gTTSenable:
+                if not LISconfig.gTTSdeactivateSpelling:
+                    self.gttsPlayer(LISconfig.arrMenu[tmpMenuEntryIndex][0], False)
 
         # save global pointer state
         self.intSpellPointer = i
-        print('pointer=', self.intSpellPointer, 'bolManual=', bolManual)
+        logConsole('pointer=', self.intSpellPointer, 'bolManual=', bolManual)
         # set up Frame After Event
         self.idFrameAfterEvent = self.frame.after(LISconfig.intLettersInterval, self.update_text, self.intSpellPointer, False)
 
+    def findInArray(self, Array, Text):
+        tmpCounter = -1
+        for Line in Array:
+            tmpCounter += 1
+            if Line[0] == Text: return tmpCounter
+        return tmpCounter
+
+    def updateLabelImage(self, MenuEntry):
+        tmpMenueEntry = MenuEntry
+        self.frame.labelText.set(tmpMenueEntry)
+        tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, tmpMenueEntry)
+        self.frame.label.configure(image=self.MenuIcons[tmpMenuEntryIndex])
+        self.frame.label.update_idletasks()
+
     def keypressBackspace(self, event = None):
         # delete the last character
-        print('key pressed: backspace')
-        tmpMenueEntry = '#DL'
-        self.frame.labelText.set(tmpMenueEntry)
+        logConsole('key pressed: backspace')
+        MenueEntry = '#DL'
+        self.updateLabelImage(MenueEntry)
         if LISconfig.gTTSenable:
-            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(MenueEntry, True)
         self.frame.txt.delete('end-2c')
 
     def keypressSpace(self, event = None):
         # new word / space between the words
-        print('key pressed: space')
-        tmpMenueEntry = ' '
-        self.frame.labelText.set(tmpMenueEntry)
+        logConsole('key pressed: space')
+        MenueEntry = ' '
+        self.updateLabelImage(MenueEntry)
         if LISconfig.gTTSenable:
-            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(MenueEntry, True)
         self.labelMouseClickLeft(self)
 
     def keypressDelete(self, event = None):
         # delete the last word
-        print('key pressed: delete')
-        tmpMenueEntry = '#DW'
-        self.frame.labelText.set(tmpMenueEntry)
+        logConsole('key pressed: delete')
+        MenueEntry = '#DW'
+        self.updateLabelImage(MenueEntry)
         if LISconfig.gTTSenable:
-            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(MenueEntry, True)
         tmpText = self.frame.txt.get('0.0', 'end')
-        self.keypressHome(self)
+        tmpText = tmpText.rstrip()
+        self.frame.txt.delete('0.0', 'end')
         if tmpText.count(' ') > 0:
             tmpDelWord = tmpText.rsplit(' ', 1)
             tmpDelWord[0] = tmpDelWord[0].rstrip()
             self.frame.txt.insert('0.0', tmpDelWord[0])
+            self.frame.txt.insert('end', ' ')
 
     def keypressHome(self, event = None):
         # delete the complete sentance
-        print('key pressed: home')
-        tmpMenueEntry = '#DS'
-        self.frame.labelText.set(tmpMenueEntry)
+        logConsole('key pressed: home')
+        MenueEntry = '#DS'
+        self.updateLabelImage(MenueEntry)
         if LISconfig.gTTSenable:
-            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(MenueEntry, True)
         self.frame.txt.delete('0.0', 'end')
 
     def keypressEnd(self, event = None):
         # send the sentance
-        print('key pressed: end')
-        tmpMenueEntry = '#SS'
-        self.frame.labelText.set(tmpMenueEntry)
+        logConsole('key pressed: end')
+        MenueEntry = '#SS'
+        self.updateLabelImage(MenueEntry)
         if LISconfig.gTTSenable:
-            self.gttsPlayer(tmpMenueEntry, True)
+            self.gttsPlayer(MenueEntry, True)
             self.gttsPlayer(self.frame.txt.get('0.0', 'end'), True)
         # delete sentance in textfield
         self.keypressHome()
 
     def keypressEscape(self, event = None):
         # escape application
-        print('key pressed: escape')
+        logConsole('key pressed: escape')
 
     def buttonPressLeft(self, event = None):
         # stop Frame After Event
         self.frame.after_cancel(self.idFrameAfterEvent)
         self.intSpellPointer -= 1
-        print('button pressed: left')
+        logConsole('button pressed: left')
         # call function manually not by event
         self.update_text(self.intSpellPointer, True)
 
@@ -219,13 +244,13 @@ class frameSpelling:
         # stop Frame After Event
         self.frame.after_cancel(self.idFrameAfterEvent)
         self.intSpellPointer += 1
-        print('button pressed: right')
+        logConsole('button pressed: right')
         # call function manually not by event
         self.update_text(self.intSpellPointer, True)
 
     def labelMouseClickLeft(self, event=None):
         chrLetterPressed = self.frame.labelText.get()
-        print("letter pressed: ", chrLetterPressed)
+        logConsole("letter pressed: ", chrLetterPressed)
         self.frame.txt.insert('end', chrLetterPressed)
         self.frame.txt.see('end')
         self.frame.txt.update_idletasks()
@@ -254,7 +279,7 @@ def gttsDownload():
         tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + charLetter + '.mp3'
         # download only if new
         if not os.path.exists(tmpFile):
-            print('gTTS cache, creating: ' + tmpFile)
+            logConsole('gTTS cache, creating: ' + tmpFile)
             tmpgTTS = gTTS(text=charLetter, lang=LISconfig.gTTSlanguage)
             tmpgTTS.save(tmpFile)
     # menue entries
@@ -262,18 +287,22 @@ def gttsDownload():
         tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '.mp3'
         # download only if new
         if not os.path.exists(tmpFile):
-            print('gTTS cache, creating: ' + tmpFile)
+            logConsole('gTTS cache, creating: ' + tmpFile)
             tmpgTTS = gTTS(text=arrMenueEntry[2], lang=LISconfig.gTTSlanguage)
             tmpgTTS.save(tmpFile)
 
-def main():
+def logConsole(*String):
+    now = datetime.datetime.now()
+    print (now.strftime("%Y-%m-%d %H:%M") + ' -', String)
 
+def main():
     # Do some preparation stuff
     # gTTS pre-downloading
     if LISconfig.gTTSenable: gttsDownload()
 
     root = tk.Tk()
     app = frameSpelling(root)
+    root.title("LIShelpers - SimpleSpellMachine")
     root.mainloop()
 
 if __name__ == '__main__':

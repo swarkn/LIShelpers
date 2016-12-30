@@ -13,7 +13,8 @@ for charLetter in strABC:
     intCount += 1
 
 # Manual string off max. screen resolution (double "" to otherwise let tk detect the max resolution)
-strScreenGeometry = "320x200"
+#strScreenGeometry = ""
+strScreenGeometry = "1280x720"
 bolScreenFull = False
 
 # Control how the letters should behave
@@ -25,8 +26,10 @@ strImage_ArrowRight = 'icons/arrow_right.png'
 
 # gTTS Environment
 gTTSenable = True
+gTTSdeactivateSpelling = True
 gTTStempFolder = 'cache/'
 gTTSlanguage = 'de'
+gTTSenableSpelling = True
 
 # editing menue (0 is allways the Menue)
 arrMenu = [

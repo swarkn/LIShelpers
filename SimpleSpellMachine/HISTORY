@@ -1,5 +1,11 @@
+30.12.2016 - Menue & more
+- show menue icons if hotkey is pressed
+- image resizing changed to dynamic image array
+- it is now possible to deactivate spelling by gTTS (gTTSdeactivateSpelling)
+- removed bug: if no screen resolution is given, (because of a wrong object reference) no max.res. could be determined
+- added a console log function
 
-29.12.2916 - gTTS
+29.12.2016 - gTTS
 - added gTTS & pyglet (avbin) support
 * extended LISconfig for gTTS
 * created caching mechanism for voice data
