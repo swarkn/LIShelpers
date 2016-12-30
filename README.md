@@ -9,7 +9,7 @@ This will be a little collection for some tools, people can use if they / or the
   - Eyerything you might see on the screen, will be read out loud (if you wish so)
   - Less information on the screen is allways more.
 
-The toolset of LIShelpers is written in Python computer language by the guys of [do-it-neat.com]. You are able to get support at the [github issues] site.
+The toolset of LIShelpers is written in Python computer language, hosted by the guys of [do-it-neat.com] and GitHub[github project]. You are able to get support at the [github issues] site.
 
 ### Tech
 
@@ -46,6 +46,10 @@ Install the binary package of AVbin by downloading and running the [setup file][
 
 Hint: to get AVbin work properly on Windows 10, copy the files AVbin.dll and/or AVbin64.dll from your Windows/system32 folder into your Windows/WinSxS folder.
 
+##### Install LIShelpers on Linux
+
+Installing LIShelpers on Linux (x86 / x86_64) should work just fine, but is not tested yet. A detailed instructionset will be at this location shortly. Support for the Raspberry Pi project will fast follow.
+
 ### Development
 
 Want to contribute? Great!
@@ -79,5 +83,3 @@ GNU GENERAL PUBLIC LICENSE v3
 [pyglet]: <https://bitbucket.org/pyglet/pyglet/wiki/Home>
 [AVbin]: <http://avbin.github.io/AVbin/Home/Home.html>
 [avbin download]: <https://avbin.github.io/AVbin/Download.html>
-
-

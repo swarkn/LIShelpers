@@ -1,3 +1,10 @@
+
+
+30.12.2016 - update README.md
+- fixed some missing python requirements
+- fixed some (maybe not all) clerical mistakes
+- fixed some more information in README.md
+
 30.12.2016
 - removed numpy. Not necessary anymore.
 - added proper formated README.md
