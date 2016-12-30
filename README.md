@@ -9,7 +9,7 @@ This will be a little collection for some tools, people can use if they / or the
   - Eyerything you might see on the screen, will be read out loud (if you wish so)
   - Less information on the screen is allways more.
 
-The toolset of LIShelpers is written in Python computer language, hosted by the guys of [do-it-neat.com] and GitHub[github project]. You are able to get support at the [github issues] site.
+The toolset of LIShelpers is written in Python computer language, hosted by the guys of [do-it-neat.com] and [GitHub][github project]. You are able to get support at the [github issues] site.
 
 ### Tech
 
