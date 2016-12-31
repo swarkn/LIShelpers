@@ -235,8 +235,14 @@ class frameSpelling:
         if LISconfig.gTTSenable:
             self.gttsPlayer(MenueEntry, True)
             self.gttsPlayer(self.frame.txt.get('0.0', 'end'), True)
-        # delete sentance in textfield
-        self.keypressHome()
+        # behavior: delete sentance in textfield
+        if LISconfig.bolSentanceDeleteAfterSpoken:
+            self.keypressHome()
+        # behavior: start at A after sentance is spoken
+        if LISconfig.bolSentanceStartAtAAfterSpoken:
+            self.frame.after_cancel(self.idFrameAfterEvent)
+            self.intSpellPointer = 0
+            self.update_label(self.intSpellPointer, True)
 
     def keypressEscape(self, event = None):
         # escape application
@@ -286,6 +292,11 @@ class frameSpelling:
             self.frame.txt.insert('end', chrLetterPressed)
             self.frame.txt.see('end')
             self.frame.txt.update_idletasks()
+            # Behavior settings
+            if LISconfig.bolLetterStartAtAAfterLetter:
+                self.frame.after_cancel(self.idFrameAfterEvent)
+                self.intSpellPointer = 0
+                self.update_label(self.intSpellPointer, True)
 
     # Calls gTTS and plays the output
     def gttsPlayer(self, strText, bolSleep, Event=None):

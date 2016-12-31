@@ -1,3 +1,8 @@
+31.12.2016 - added bahavior options
+- added to start a A again after sentance was spoken
+- added to start at A again after letter was choosen
+- added to not delete sentance after it was spoken
+
 31.12.2016 - added the menu
 - icon added: menu_back.png
 - added possibility to supress console output
