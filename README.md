@@ -17,7 +17,7 @@ This is the keyboard layout:
 [![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers-SSM_keyboard-layout_v01.png)](https://www.do-it-neat.com/projekte/lishelpers)
 
 This is the user interface:
-[![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers_SSM.png)](https://www.do-it-neat.com/projekte/lishelpers)
+[![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers_SSM.jpg)](https://www.do-it-neat.com/projekte/lishelpers)
 
 ### Tech
 
