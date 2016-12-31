@@ -1,3 +1,10 @@
+31.12.2016 - added the menu
+- icon added: menu_back.png
+- added possibility to supress console output
+- renamed function update_text in update_label
+- added editing menue
+- added new voice strings
+
 30.12.2016 - typos, typos everywhere
 - removed more typos
 - added more information

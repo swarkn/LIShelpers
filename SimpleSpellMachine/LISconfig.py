@@ -18,7 +18,7 @@ strScreenGeometry = "1280x720"
 bolScreenFull = False
 
 # Control how the letters should behave
-intLettersInterval = 1000
+intLettersInterval = 2000
 
 # system icons
 strImage_ArrowLeft = 'icons/arrow_left.png'
@@ -26,17 +26,21 @@ strImage_ArrowRight = 'icons/arrow_right.png'
 
 # gTTS Environment
 gTTSenable = True
-gTTSdeactivateSpelling = True
+gTTSdeactivateSpelling = False
 gTTStempFolder = 'cache/'
 gTTSlanguage = 'de'
-gTTSenableSpelling = True
+# gTTSenableSpelling = True
+
+# enable console output
+bolConsoleOutput = True
 
 # editing menue (0 is allways the Menue)
 arrMenu = [
-    ['#ME', 'icons/menu.png', 'Menü'],
-    [' ', 'icons/new_word.png', 'Neues Wort'],
-    ['#DL', 'icons/del_letter.png', 'letzter Buchstabe gelöscht'],
-    ['#DW', 'icons/del_word.png', 'letzes Wort gelöscht'],
-    ['#DS', 'icons/del_sentance.png', 'gesamter Satz gelöscht'],
-    ['#SS', 'icons/send_sentance.png', 'ich sage']
+    ['#ME', 'icons/menu.png', 'Menü', 'Menü'],
+    [' ', 'icons/new_word.png', 'Neues Wort', 'Neues Wort'],
+    ['#DL', 'icons/del_letter.png', 'letzter Buchstabe gelöscht', 'letzen Buchstaben löschen', 'keypressBackspace'],
+    ['#DW', 'icons/del_word.png', 'letzes Wort gelöscht', 'letztes Wort löschen', 'keypressDelete'],
+    ['#DS', 'icons/del_sentance.png', 'gesamter Satz gelöscht', 'gesamter Satz löschen', 'keypressHome'],
+    ['#SS', 'icons/send_sentance.png', 'ich sage', 'Satz sagen', 'keypressEnd'],
+    ['#MB', 'icons/menu_back.png', 'zurück', 'zurück', 'keypressEscape']
 ]

@@ -18,6 +18,7 @@ class frameSpelling:
         # define class variables
         self.intSpellPointer = -1
         self.idFrameAfterEvent = 0
+        self.bolInMenue = False
 
         # set fullscreen & resolution
         self.master.overrideredirect(LISconfig.bolScreenFull)
@@ -74,7 +75,7 @@ class frameSpelling:
         frame.label.place(relx=0.3, rely=0.0, relheight=0.7, relwidth=0.4)
         # setup frame and update hook
         frame.pack()
-        self.idFrameAfterEvent = self.frame.after(0, self.update_text, self.intSpellPointer, False)
+        self.idFrameAfterEvent = self.frame.after(0, self.update_label, self.intSpellPointer, False)
         # set up root bindings
         self.master.bind("<Configure>", self.windowReconfigure)
 
@@ -128,36 +129,46 @@ class frameSpelling:
         return (int(RawImage.size[0] / intImageRatio), int(RawImage.size[1] / intImageRatio))
 
     # function to write the letters to the screen
-    def update_text(self, i, bolManual, event = None):
+    def update_label(self, i, bolManual, event = None):
         # auto move pointer forward if auto called by frame after event
         if not bolManual: i += 1
 
-        # correct automatic and manual pointer jumping
-        if i < -1: i = len(LISconfig.strABC) - 1
-        if i > len(LISconfig.strABC) - 1: i = -1
+        if self.bolInMenue:
+            # correct automatic and manual pointer jumping
+            if i < 1 : i = len(LISconfig.arrMenu) - 1
+            if i > len(LISconfig.arrMenu) - 1: i = 1
 
-        # update text in label (-1 is Menue)
-        if not i == -1:
-            self.frame.label.configure(image='')
-            self.frame.labelText.set(LISconfig.arrABC[i])
+            self.updateLabelImage(LISconfig.arrMenu[i][0])
             if LISconfig.gTTSenable:
                 if not LISconfig.gTTSdeactivateSpelling:
-                    self.gttsPlayer(LISconfig.arrABC[i], False)
+                    self.gttsPlayer(LISconfig.arrMenu[i][0]+'2', True)
         else:
-            # show menue item (for the case only "yes" is possible)
-            tmpMenueEntry = '#ME'
-            self.frame.labelText.set(tmpMenueEntry)
-            tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, tmpMenueEntry)
-            self.frame.label.configure(image=self.MenuIcons[tmpMenuEntryIndex])
-            if LISconfig.gTTSenable:
-                if not LISconfig.gTTSdeactivateSpelling:
-                    self.gttsPlayer(LISconfig.arrMenu[tmpMenuEntryIndex][0], False)
+            # correct automatic and manual pointer jumping
+            if i < -1: i = len(LISconfig.strABC) - 1
+            if i > len(LISconfig.strABC) - 1: i = -1
+
+            if i == -1:
+                # show menue item (for the case only "yes" is possible)
+                tmpMenueEntry = '#ME'
+                self.frame.labelText.set(tmpMenueEntry)
+                tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, tmpMenueEntry)
+                self.frame.label.configure(image=self.MenuIcons[tmpMenuEntryIndex])
+                if LISconfig.gTTSenable:
+                    if not LISconfig.gTTSdeactivateSpelling:
+                        self.gttsPlayer(LISconfig.arrMenu[tmpMenuEntryIndex][0], False)
+            else:
+                # Just rotate letters
+                self.frame.label.configure(image='')
+                self.frame.labelText.set(LISconfig.arrABC[i])
+                if LISconfig.gTTSenable:
+                    if not LISconfig.gTTSdeactivateSpelling:
+                        self.gttsPlayer(LISconfig.arrABC[i], False)
 
         # save global pointer state
         self.intSpellPointer = i
         logConsole('pointer=', self.intSpellPointer, 'bolManual=', bolManual)
         # set up Frame After Event
-        self.idFrameAfterEvent = self.frame.after(LISconfig.intLettersInterval, self.update_text, self.intSpellPointer, False)
+        self.idFrameAfterEvent = self.frame.after(LISconfig.intLettersInterval, self.update_label, self.intSpellPointer, False)
 
     def findInArray(self, Array, Text):
         tmpCounter = -1
@@ -237,7 +248,7 @@ class frameSpelling:
         self.intSpellPointer -= 1
         logConsole('button pressed: left')
         # call function manually not by event
-        self.update_text(self.intSpellPointer, True)
+        self.update_label(self.intSpellPointer, True)
 
     def buttonPressRight(self, event = None):
         # stop Frame After Event
@@ -245,14 +256,36 @@ class frameSpelling:
         self.intSpellPointer += 1
         logConsole('button pressed: right')
         # call function manually not by event
-        self.update_text(self.intSpellPointer, True)
+        self.update_label(self.intSpellPointer, True)
 
     def labelMouseClickLeft(self, event=None):
         chrLetterPressed = self.frame.labelText.get()
-        logConsole("letter pressed: ", chrLetterPressed)
-        self.frame.txt.insert('end', chrLetterPressed)
-        self.frame.txt.see('end')
-        self.frame.txt.update_idletasks()
+        # check if letter or menue item is pressed
+        if chrLetterPressed[0] == "#":
+            logConsole("menu item:", chrLetterPressed)
+            # LISconfig.arrMenu 00 is allways the main menue icon
+            if chrLetterPressed == LISconfig.arrMenu[0][0]:
+                # stop Frame After Event, enter menue
+                self.frame.after_cancel(self.idFrameAfterEvent)
+                self.bolInMenue = True
+                # call function manually not by event
+                self.intSpellPointer = 1
+                self.update_label(self.intSpellPointer, True)
+            else:
+                tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, chrLetterPressed)
+                self.frame.after_cancel(self.idFrameAfterEvent)
+                # call function keypress dynamically
+                getattr(self, LISconfig.arrMenu[tmpMenuEntryIndex][4])()
+                # get out of menue
+                self.bolInMenue = False
+                self.intSpellPointer = 0
+                self.update_label(self.intSpellPointer, True)
+        else:
+            logConsole("letter pressed: ", chrLetterPressed)
+            # add letter to text widget
+            self.frame.txt.insert('end', chrLetterPressed)
+            self.frame.txt.see('end')
+            self.frame.txt.update_idletasks()
 
     # Calls gTTS and plays the output
     def gttsPlayer(self, strText, bolSleep, Event=None):
@@ -284,15 +317,22 @@ def gttsDownload():
     # menue entries
     for arrMenueEntry in LISconfig.arrMenu:
         tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '.mp3'
+        tmpFile2 = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '2.mp3'
         # download only if new
         if not os.path.exists(tmpFile):
+            # solve better!
             logConsole('gTTS cache, creating: ' + tmpFile)
             tmpgTTS = gTTS(text=arrMenueEntry[2], lang=LISconfig.gTTSlanguage)
             tmpgTTS.save(tmpFile)
+        if not os.path.exists(tmpFile2):
+            logConsole('gTTS cache, creating: ' + tmpFile2)
+            tmpgTTS = gTTS(text=arrMenueEntry[3], lang=LISconfig.gTTSlanguage)
+            tmpgTTS.save(tmpFile2)
 
 def logConsole(*String):
-    now = datetime.datetime.now()
-    print (now.strftime("%Y-%m-%d %H:%M") + ' -', String)
+    if LISconfig.bolConsoleOutput:
+        now = datetime.datetime.now()
+        print (now.strftime("%Y-%m-%d %H:%M") + ' -', String)
 
 def main():
     # Do some preparation stuff
