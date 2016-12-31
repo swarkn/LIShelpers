@@ -11,6 +11,14 @@ This will be a little collection for some tools, people can use if they / or the
 
 The toolset of LIShelpers is written in Python computer language, hosted by the guys of [do-it-neat.com] and [GitHub][github project]. You are able to get support at the [github issues] site.
 
+### How to use LIShelpers - SimpleSpellMachine
+
+This is the keyboard layout:
+[![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers-SSM_keyboard-layout_v01.png)](https://www.do-it-neat.com/projekte/lishelpers)
+
+This is the user interface:
+[![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers_SSM.png)](https://www.do-it-neat.com/projekte/lishelpers)
+
 ### Tech
 
 The LIShelpers package uses a number of open source projects to work properly:
