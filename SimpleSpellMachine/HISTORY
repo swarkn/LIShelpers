@@ -1,3 +1,6 @@
+07.01.2017 - testing with vlc
+- added vlc support. Testing...
+
 07.01.2017 - working on linux compatibility
 - changed pyglet to pygame library to play mp3 files
 - setting LISconfig to preferences of Hans

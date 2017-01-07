@@ -6,6 +6,7 @@ import tkinter as tk
 from PIL import ImageTk
 from gtts import gTTS
 import pygame
+import vlc
 
 # import LIS configuration
 import LISconfig
@@ -318,19 +319,22 @@ class frameSpelling:
         if os.path.exists(gTTScachefile):
             # use file in cache
             #gTTScache = pyglet.media.load(gTTScachefile, streaming=False)
-            pygame.mixer.music.load(gTTScachefile)
+            #pygame.mixer.music.load(gTTScachefile)
+            pTTScache = vlc.MediaPlayer(gTTScachefile)
         else:
             # download to cache
             tmpgTTS = gTTS(text=strText, lang=LISconfig.gTTSlanguage)
             tmpFile = LISconfig.gTTStempFolder + '_last.mp3'
             tmpgTTS.save(tmpFile)
             #gTTScache = pyglet.media.load(tmpFile, streaming=False)
-            pygame.mixer.music.load(tmpFile)
+            #pygame.mixer.music.load(tmpFile)
+            pTTScache = vlc.MediaPlayer(tmpFile)
         # play resource with or without sleep
-        pygame.mixer.music.play()
-        if bolSleep:
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
+        #pygame.mixer.music.play()
+        pTTScache.play()
+        #if bolSleep:
+        #    while pygame.mixer.music.get_busy():
+        #        pygame.time.Clock().tick(10)
 
 def gttsDownload():
     if not os.path.exists(LISconfig.gTTStempFolder): os.makedirs(LISconfig.gTTStempFolder)
