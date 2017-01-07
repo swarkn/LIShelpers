@@ -19,9 +19,9 @@ bolScreenFull = False
 
 ### Editor behavior
 # Control how the letters should behave
-intLettersInterval = 1500
+intLettersInterval = 2000
 # Delete sentance after it is spoken
-bolSentanceDeleteAfterSpoken = False
+bolSentanceDeleteAfterSpoken = True
 # Start at A after sentance is spoken
 bolSentanceStartAtAAfterSpoken = True
 # Start at A after letter choosen
