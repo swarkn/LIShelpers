@@ -1,10 +1,3 @@
-07.01.2017 - working on linux compatibility
-- changed pyglet to pygame library to play mp3 files
-- setting LISconfig to preferences of Hans
-
-01.01.2017 - Say "no"
-- implemented ESC as "no" key
-
 31.12.2016 - added bahavior options
 - added to start a A again after sentance was spoken
 - added to start at A again after letter was choosen

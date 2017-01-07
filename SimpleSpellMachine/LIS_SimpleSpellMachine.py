@@ -5,7 +5,7 @@ import os, string, time, datetime
 import tkinter as tk
 from PIL import ImageTk
 from gtts import gTTS
-import pygame
+import pyglet
 
 # import LIS configuration
 import LISconfig
@@ -247,19 +247,6 @@ class frameSpelling:
     def keypressEscape(self, event = None):
         # escape application
         logConsole('key pressed: escape')
-        MenueEntry = '#MB'
-        self.updateLabelImage(MenueEntry)
-        if LISconfig.gTTSenable:
-            self.gttsPlayer(MenueEntry, True)
-
-        # Exit menue if inside
-        self.bolInMenue = False
-
-        # Start at A
-        self.frame.after_cancel(self.idFrameAfterEvent)
-        self.intSpellPointer = -1
-        self.update_label(self.intSpellPointer, True)
-
 
     def buttonPressLeft(self, event = None):
         # stop Frame After Event
@@ -292,12 +279,12 @@ class frameSpelling:
                 self.update_label(self.intSpellPointer, True)
             else:
                 tmpMenuEntryIndex = self.findInArray(LISconfig.arrMenu, chrLetterPressed)
+                self.frame.after_cancel(self.idFrameAfterEvent)
                 # call function keypress dynamically
                 getattr(self, LISconfig.arrMenu[tmpMenuEntryIndex][4])()
                 # get out of menue
-                self.frame.after_cancel(self.idFrameAfterEvent)
                 self.bolInMenue = False
-                self.intSpellPointer = -1
+                self.intSpellPointer = 0
                 self.update_label(self.intSpellPointer, True)
         else:
             logConsole("letter pressed: ", chrLetterPressed)
@@ -317,20 +304,16 @@ class frameSpelling:
         gTTScachefile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + strText + '.mp3'
         if os.path.exists(gTTScachefile):
             # use file in cache
-            #gTTScache = pyglet.media.load(gTTScachefile, streaming=False)
-            pygame.mixer.music.load(gTTScachefile)
+            gTTScache = pyglet.media.load(gTTScachefile, streaming=False)
         else:
             # download to cache
             tmpgTTS = gTTS(text=strText, lang=LISconfig.gTTSlanguage)
             tmpFile = LISconfig.gTTStempFolder + '_last.mp3'
             tmpgTTS.save(tmpFile)
-            #gTTScache = pyglet.media.load(tmpFile, streaming=False)
-            pygame.mixer.music.load(tmpFile)
+            gTTScache = pyglet.media.load(tmpFile, streaming=False)
         # play resource with or without sleep
-        pygame.mixer.music.play()
-        if bolSleep:
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
+        gTTScache.play()
+        if bolSleep: time.sleep(gTTScache.duration)
 
 def gttsDownload():
     if not os.path.exists(LISconfig.gTTStempFolder): os.makedirs(LISconfig.gTTStempFolder)
@@ -370,11 +353,6 @@ def main():
     root = tk.Tk()
     app = frameSpelling(root)
     root.title("LIShelpers - SimpleSpellMachine")
-
-    # init pygame mixer
-    pygame.init()
-    pygame.mixer.init()
-
     root.mainloop()
 
 if __name__ == '__main__':
