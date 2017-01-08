@@ -11,6 +11,8 @@ This will be a little collection for some tools, people can use if they / or the
 
 The toolset of LIShelpers is written in Python computer language, hosted by the guys of [do-it-neat.com] and [GitHub][github project]. You are able to get support at the [github issues] site.
 
+Please visit this site from time to time. It will be constantly updated, until we release a first major version.
+
 ### How to use LIShelpers - SimpleSpellMachine
 
 This is the keyboard layout:
@@ -26,38 +28,95 @@ The LIShelpers package uses a number of open source projects to work properly:
 * [Tk] - a thin object-oriented layer on top of Tcl/Tk.
 * [ImageTk] - support to create and modify Tkinter BitmapImage and PhotoImage objects from PIL images
 * [gTTS] - Create an mp3 file from spoken text via the Google TTS (Text-to-Speech) API
-* [pyglet] - a cross-platform windowing and multimedia library for Python
-* [AVbin] - a cross-platform, thin wrapper around Libav’s video and audio decoding library
+* [python-vlc] - a complete coverage of the libvlc API for Python
+* [VLC Mulitmedia Player] - is a free and open source mulitmedia player
 
 And of course the LIShelpers package itself is open source with a [public repository][github project]
  on GitHub.
 
 ### Installation
 
-LIShelpers requires [Python](https://python.org/) v3.5.2 to run.
-
-Download and extract the [latest pre-built release](https://www.python.org/downloads/release/python-352/).
+LIShelpers requires at least [Python](https://python.org/) 3.4 to run. Python 3.6 is currently not supported.
 
 ##### Install LIShelpers on Windows
 
+Download and extract the [latest pre-built release](https://www.python.org/downloads/release/python-352/).
+
 Install the python package the "typical" way. Please don't forget to put the Python search path into your PATH environment variable.
 
-Open up a command prompt (by starting cmd.exe) and install the necessary Python modules:
+Download and install the [latest release](http://www.videolan.org/vlc/) of VLC player, according to your Windows version.
+
+Open up a command prompt (by right-clicking cmd.exe and start it with administrative privileges) and install the necessary Python modules:
 
 ```cmd
-$ pip install pillow
-$ pip install gtts
-$ pip install pyglet
+C:\Users\bob> pip install pillow
+C:\Users\bob> pip install gtts
+C:\Users\bob> pip install python-vlc
 ```
-Install the binary package of AVbin by downloading and running the [setup file][avbin download]. Please be sure to install the right flavor of AVbin (32/64bit). The version you need, depents on the Python version you are using.
 
-Hint: to get AVbin work properly on Windows 10, copy the files AVbin.dll and/or AVbin64.dll from your Windows/system32 folder into your Windows/WinSxS folder.
+Download the latest [source code](https://github.com/swarkn/LIShelpers/archive/master.zip) of the LIShelpers as a zip file and extract it onto you computer.
 
-Download the latest [source code](https://github.com/swarkn/LIShelpers/archive/master.zip) of the LIShelpers as a zip file and extract it onto you computer. Go inside the folder "LIShelpers-master/SimpleSpellMachine" and double-click "LIS_SimpleSpellMachine.py" to start the SimpleSpellMachine. The first time you'll start the tool, a cache will be build up to fasten up the application. To configure the SimpleSpellMachine, take a look at the file LISconfig.py and feel free to edit the variables to your needs.
+Go inside the folder "LIShelpers-master/SimpleSpellMachine" and double-click "LIS_SimpleSpellMachine.py" to start the SimpleSpellMachine.
+
+The first time you'll start the SimpleSpellMachine, a cache will be build up to fasten up the application. To configure the SimpleSpellMachine, take a look at the file LISconfig.py and feel free to edit the variables to your needs.
 
 ##### Install LIShelpers on Linux
 
-Installing LIShelpers on Linux (x86 / x86_64) should work just fine, but is not tested yet. A detailed instructionset will be at this location shortly. Support for the Raspberry Pi project will fast follow.
+The following instructionset will help you install LIShelpers on openSUSE Leap 42.2. Support for the Raspberry Pi project will fast follow. Therefore, an instructionset to install LIShelpers on Debian flavored Linux distributions will also be available soon.
+
+Update your current Leap 42.2 installation by refreshing your repositories and updating your packages.
+
+```cmd
+$ sudo zypper refresh
+$ sudo zypper up
+```
+
+Now, install the necessary binary packages for Python 3 and VLC
+
+```cmd
+$ sudo zypper in python3
+$ sudo zypper in vlc
+```
+
+Basically, you are able to install all needed Python modules by pip. However, for your convenience, openSUSE provides some Python base-packages within it's package management. You should use those:
+
+```cmd
+$ sudo zypper in python3-tk
+$ sudo zypper in python3-Pillow
+```
+
+Now, there are only some "non-standard" packages left. Just install them by using pip.
+
+```cmd
+$ sudo pip install gtts
+$ sudo pip install python-vlc
+```
+
+Now, we need to clone the LIShelpers repository into the current users home directory.
+
+```cmd
+$ cd ~
+$ git clone https://github.com/swarkn/LIShelpers.git
+```
+
+To start the LIShelpers SimpleSpellMachine, just go inside the newly generated folder and start it.
+
+```cmd
+$ cd LIShelpers/SimpleSpellMachine/
+$ python3 LIS_SimpleSpellMachine.py
+```
+
+### FAQ
+
+**Q: I am experiencing problems while downloading the cache from Google Translate. There are SSL exceptions inside the terminal window.**
+
+This might be caused by an rather old version of your Pythons request module. Just uninstall/reinstall the latest version (should be 2.12.4 or above).
+
+```cmd
+$ pip list
+$ pip uninstall requests
+$ pip install requests
+```
 
 ### Development
 
@@ -89,6 +148,5 @@ GNU GENERAL PUBLIC LICENSE v3
 [Tk]: <http://www.tcl.tk/>
 [ImageTk]: <https://wiki.python.org/moin/TkInter>
 [gTTS]: <https://pypi.python.org/pypi/gTTS>
-[pyglet]: <https://bitbucket.org/pyglet/pyglet/wiki/Home>
-[AVbin]: <http://avbin.github.io/AVbin/Home/Home.html>
-[avbin download]: <https://avbin.github.io/AVbin/Download.html>
+[python-vlc]: <https://wiki.videolan.org/python_bindings>
+[VLC Mulitmedia Player]: <http://www.videolan.org/vlc/>
