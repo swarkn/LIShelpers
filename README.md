@@ -13,7 +13,18 @@ The toolset of LIShelpers is written in Python computer language, hosted by the 
 
 Please visit this site from time to time. It will be constantly updated, until we release a first major version.
 
-### How to use LIShelpers - SimpleSpellMachine
+### Table of contents
+**[1. How to use the SimpleSpellMachine](#how-to-use-the-simplespellmachine)**  
+**[2. Tech](#tech)**  
+**[3. Installation](#installation)**  
+**[3.1 Install LIShelpers on Windows](#install-lishelpers-on-windows)**  
+**[3.2 Install LIShelpers on Linux](#install-lishelpers-on-linux)**  
+**[3.3 Install LIShelpers on Raspberry Pi](#install-lishelpers-on-raspberry-pi)**  
+**[4. FAQ](#faq)**
+**[5. Development](#development)**
+**[6. Todos](#todos)**
+
+### How to use the SimpleSpellMachine
 
 This is the keyboard layout:
 [![N|Solid](http://www.do-it-neat.com/wp-content/uploads/2016/12/LIShelpers-SSM_keyboard-layout_v01.png)](https://www.do-it-neat.com/projekte/lishelpers)
@@ -85,7 +96,7 @@ $ sudo zypper in python3-tk
 $ sudo zypper in python3-Pillow
 ```
 
-Now, there are only some "non-standard" packages left. Just install them by using pip.
+There are only some "non-standard" packages left missing. Just install them by using pip.
 
 ```cmd
 $ sudo pip install gtts
@@ -106,6 +117,51 @@ $ cd LIShelpers/SimpleSpellMachine/
 $ python3 LIS_SimpleSpellMachine.py
 ```
 
+##### Install LIShelpers on Raspberry Pi
+
+The installation of the LIShelpers are tested with Raspbian Jessie. Therefore, this part of the readme should also work with all other Debian flavors arround.
+
+Update your current Raspbian installation by refreshing your repositories and updating your packages.
+
+```cmd
+$ sudo apt-get update
+```
+
+Now, install the necessary binary packages for Python 3 and VLC.
+
+```cmd
+$ sudo apt-get install python3
+$ sudo apt-get install vlc
+```
+
+Pillow might be isntalled, but in Debian flavors, you need to install imagetk separately.
+
+```cmd
+$ sudo apt-get install python3-pil
+$ sudo apt-get install python3-pil.imagetk
+```
+
+Only gtts and the Python VLC modules are left missing. Those can be installed via pip.
+
+```cmd
+sudo pip3 install gtts
+sudo pip3 install python-vlc
+```
+
+Now, we need to clone the LIShelpers repository into the current users home directory.
+
+```cmd
+$ cd ~
+$ git clone https://github.com/swarkn/LIShelpers.git
+```
+
+To start the LIShelpers SimpleSpellMachine, just go inside the newly generated folder and start it.
+
+```cmd
+$ cd LIShelpers/SimpleSpellMachine/
+$ DISPLAY=:0 python3 LIS_SimpleSpellMachine.py
+```
+
 ### FAQ
 
 **Q: I am experiencing problems while downloading the cache from Google Translate. There are SSL exceptions inside the terminal window.**
@@ -117,6 +173,10 @@ $ pip list
 $ pip uninstall requests
 $ pip install requests
 ```
+
+**Q: There is no audio output on Raspberry Pi. How do i fix that?**
+
+This might come from some default settings of your Raspian image. Just run "sudo raspi-config". Within the advanced settings, set the audio output to 3.5mm or HDMI to your needs. You might need to restart your Raspberry Pi.
 
 ### Development
 
