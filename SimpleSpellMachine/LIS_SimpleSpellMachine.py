@@ -5,7 +5,6 @@ import os, string, time, datetime
 import tkinter as tk
 from PIL import ImageTk
 from gtts import gTTS
-import pygame
 import vlc
 
 # import LIS configuration
@@ -382,11 +381,6 @@ def main():
     root = tk.Tk()
     app = frameSpelling(root)
     root.title("LIShelpers - SimpleSpellMachine")
-
-    # init pygame mixer
-    pygame.init()
-    pygame.mixer.init()
-
     root.mainloop()
 
 if __name__ == '__main__':
