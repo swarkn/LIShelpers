@@ -314,27 +314,35 @@ class frameSpelling:
 
     # Calls gTTS and plays the output
     def gttsPlayer(self, strText, bolSleep, Event=None):
+
+        instance = vlc.Instance(['--no-video'])
+        VLCplayer = instance.media_player_new()
+
         # check cache if audio was downloaded before
         gTTScachefile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + strText + '.mp3'
         if os.path.exists(gTTScachefile):
             # use file in cache
-            #gTTScache = pyglet.media.load(gTTScachefile, streaming=False)
-            #pygame.mixer.music.load(gTTScachefile)
-            pTTScache = vlc.MediaPlayer(gTTScachefile)
+            pTTScache = instance.media_new(gTTScachefile)
+            VLCplayer.set_media(pTTScache)
         else:
             # download to cache
             tmpgTTS = gTTS(text=strText, lang=LISconfig.gTTSlanguage)
             tmpFile = LISconfig.gTTStempFolder + '_last.mp3'
             tmpgTTS.save(tmpFile)
-            #gTTScache = pyglet.media.load(tmpFile, streaming=False)
-            #pygame.mixer.music.load(tmpFile)
-            pTTScache = vlc.MediaPlayer(tmpFile)
+            pTTScache = instance.media_new(tmpFile)
+            VLCplayer.set_media(pTTScache)
         # play resource with or without sleep
-        #pygame.mixer.music.play()
-        pTTScache.play()
-        #if bolSleep:
-        #    while pygame.mixer.music.get_busy():
-        #        pygame.time.Clock().tick(10)
+        VLCplayer.play()
+        # this code is blocking. It really annoys me. The next code refactoring will fix that.
+        if bolSleep:
+            # "nothing special" also, because wait to start. Pause is liked stopped for us
+            VLCplaying = set([0,1,2,3])
+            while True:
+                state = VLCplayer.get_state()
+                if state not in VLCplaying:
+                    break
+                time.sleep(.10)
+                continue
 
 def gttsDownload():
     if not os.path.exists(LISconfig.gTTStempFolder): os.makedirs(LISconfig.gTTStempFolder)
