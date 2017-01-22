@@ -41,6 +41,8 @@ The LIShelpers package uses a number of open source projects to work properly:
 * [gTTS] - Create an mp3 file from spoken text via the Google TTS (Text-to-Speech) API
 * [python-vlc] - a complete coverage of the libvlc API for Python
 * [VLC Mulitmedia Player] - is a free and open source mulitmedia player
+* [pydub] - Manipulate audio with a simple and easy high level interface
+* [ffmpeg] - FFmpeg is the leading multimedia framework, able to decode, encode, transcode, mux, demux, stream, filter and play pretty much anything that humans and machines have created
 
 And of course the LIShelpers package itself is open source with a [public repository][github project]
  on GitHub.
@@ -57,12 +59,15 @@ Install the python package the "typical" way. Please don't forget to put the Pyt
 
 Download and install the [latest release](http://www.videolan.org/vlc/) of VLC player, according to your Windows version.
 
+Download and extract the [latest release](https://ffmpeg.org/download.html#build-windows) of ffmpeg into your LIShelpers - SimpleSpellMachine directory. The static release of ffmpeg.exe is just enough.
+
 Open up a command prompt (by right-clicking cmd.exe and start it with administrative privileges) and install the necessary Python modules:
 
 ```cmd
 C:\Users\bob> pip install pillow
 C:\Users\bob> pip install gtts
 C:\Users\bob> pip install python-vlc
+C:\Users\bob> pip install pydub
 ```
 
 Download the latest [source code](https://github.com/swarkn/LIShelpers/archive/master.zip) of the LIShelpers as a zip file and extract it onto you computer.
@@ -87,6 +92,7 @@ Now, install the necessary binary packages for Python 3 and VLC
 ```cmd
 $ sudo zypper in python3
 $ sudo zypper in vlc
+$ sudo zypper in ffmpeg
 ```
 
 Basically, you are able to install all needed Python modules by pip. However, for your convenience, openSUSE provides some Python base-packages within it's package management. You should use those:
@@ -101,6 +107,7 @@ There are only some "non-standard" packages left missing. Just install them by u
 ```cmd
 $ sudo pip install gtts
 $ sudo pip install python-vlc
+$ sudo pip install pydub
 ```
 
 Now, we need to clone the LIShelpers repository into the current users home directory.
@@ -132,6 +139,7 @@ Now, install the necessary binary packages for Python 3 and VLC.
 ```cmd
 $ sudo apt-get install python3
 $ sudo apt-get install vlc
+$ sudo apt-get install ffmpeg
 ```
 
 Pillow might be isntalled, but in Debian flavors, you need to install imagetk separately.
@@ -146,6 +154,7 @@ Only gtts and the Python VLC modules are left missing. Those can be installed vi
 ```cmd
 sudo pip3 install gtts
 sudo pip3 install python-vlc
+sudo pip3 install pydub
 ```
 
 Now, we need to clone the LIShelpers repository into the current users home directory.
@@ -210,3 +219,5 @@ GNU GENERAL PUBLIC LICENSE v3
 [gTTS]: <https://pypi.python.org/pypi/gTTS>
 [python-vlc]: <https://wiki.videolan.org/python_bindings>
 [VLC Mulitmedia Player]: <http://www.videolan.org/vlc/>
+[pydub]: <http://pydub.com/>
+[ffmpeg]: <https://ffmpeg.org>

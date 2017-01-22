@@ -6,6 +6,7 @@ import tkinter as tk
 from PIL import ImageTk
 from gtts import gTTS
 import vlc
+from pydub import AudioSegment
 
 # import LIS configuration
 import LISconfig
@@ -239,7 +240,7 @@ class frameSpelling:
         if LISconfig.bolSentanceDeleteAfterSpoken:
             self.keypressHome()
         # behavior: start at A after sentance is spoken
-        if LISconfig.bolSentanceStartAtAAfterSpoken:
+        if LISconfig.bolSentanceStartAtBeginningAfterSpoken:
             self.frame.after_cancel(self.idFrameAfterEvent)
             self.intSpellPointer = 0
             self.update_label(self.intSpellPointer, True)
@@ -306,10 +307,8 @@ class frameSpelling:
             self.frame.txt.see('end')
             self.frame.txt.update_idletasks()
             # Behavior settings
-            if LISconfig.bolLetterStartAtAAfterLetter:
-                self.frame.after_cancel(self.idFrameAfterEvent)
-                self.intSpellPointer = 0
-                self.update_label(self.intSpellPointer, True)
+            if LISconfig.bolLetterStartAtBeginning:
+                self.keypressEscape()
 
     # Calls gTTS and plays the output
     def gttsPlayer(self, strText, bolSleep, Event=None):
@@ -318,7 +317,7 @@ class frameSpelling:
         VLCplayer = instance.media_player_new()
 
         # check cache if audio was downloaded before
-        gTTScachefile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + strText + '.mp3'
+        gTTScachefile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + strText + LISconfig.UIaudioout + '.mp3'
         if os.path.exists(gTTScachefile):
             # use file in cache
             pTTScache = instance.media_new(gTTScachefile)
@@ -345,28 +344,60 @@ class frameSpelling:
 
 def gttsDownload():
     if not os.path.exists(LISconfig.gTTStempFolder): os.makedirs(LISconfig.gTTStempFolder)
+
+    tmpFileExtension = '.mp3'
     # letters
     for charLetter in LISconfig.strABC:
-        tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + charLetter + '.mp3'
+        tmpFileName = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + charLetter
         # download only if new
-        if not os.path.exists(tmpFile):
-            logConsole('gTTS cache, creating: ' + tmpFile)
+        if not os.path.exists(tmpFileName + tmpFileExtension):
+            logConsole('gTTS cache, creating: ' + tmpFileName + tmpFileExtension)
             tmpgTTS = gTTS(text=charLetter, lang=LISconfig.gTTSlanguage)
-            tmpgTTS.save(tmpFile)
+            tmpgTTS.save(tmpFileName + tmpFileExtension)
+
+            # Pydub
+            # save left
+            pydLetter = AudioSegment.from_file(tmpFileName + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(-1.0)
+            pydLetter.export(tmpFileName + 'left' + tmpFileExtension, format="mp3")
+            # save right
+            pydLetter = AudioSegment.from_file(tmpFileName + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(1.0)
+            pydLetter.export(tmpFileName + 'right' + tmpFileExtension, format="mp3")
+
     # menue entries
     for arrMenueEntry in LISconfig.arrMenu:
-        tmpFile = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '.mp3'
-        tmpFile2 = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0] + '2.mp3'
+        tmpFileName = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0]
+        tmpFileName2 = LISconfig.gTTStempFolder + LISconfig.gTTSlanguage + '_' + arrMenueEntry[0]
         # download only if new
-        if not os.path.exists(tmpFile):
+        if not os.path.exists(tmpFileName + tmpFileExtension):
             # solve better!
-            logConsole('gTTS cache, creating: ' + tmpFile)
+            logConsole('gTTS cache, creating: ' + tmpFileName + tmpFileExtension)
             tmpgTTS = gTTS(text=arrMenueEntry[2], lang=LISconfig.gTTSlanguage)
-            tmpgTTS.save(tmpFile)
-        if not os.path.exists(tmpFile2):
-            logConsole('gTTS cache, creating: ' + tmpFile2)
+            tmpgTTS.save(tmpFileName + tmpFileExtension)
+            # Pydub
+            # save left
+            pydLetter = AudioSegment.from_file(tmpFileName + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(-1.0)
+            pydLetter.export(tmpFileName + 'left' + tmpFileExtension, format="mp3")
+            # save right
+            pydLetter = AudioSegment.from_file(tmpFileName + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(1.0)
+            pydLetter.export(tmpFileName + 'right' + tmpFileExtension, format="mp3")
+
+        if not os.path.exists(tmpFileName2 + tmpFileExtension):
+            logConsole('gTTS cache, creating: ' + tmpFileName2 + tmpFileExtension)
             tmpgTTS = gTTS(text=arrMenueEntry[3], lang=LISconfig.gTTSlanguage)
-            tmpgTTS.save(tmpFile2)
+            tmpgTTS.save(tmpFileName2)
+            # Pydub
+            # save left
+            pydLetter = AudioSegment.from_file(tmpFileName2 + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(-1.0)
+            pydLetter.export(tmpFileName2 + 'left' + tmpFileExtension, format="mp3")
+            # save right
+            pydLetter = AudioSegment.from_file(tmpFileName2 + tmpFileExtension, format="mp3")
+            pydLetter = pydLetter.pan(1.0)
+            pydLetter.export(tmpFileName2 + 'right' + tmpFileExtension, format="mp3")
 
 def logConsole(*String):
     if LISconfig.bolConsoleOutput:

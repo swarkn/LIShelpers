@@ -1,6 +1,7 @@
 # project relevant cache files
 cache/
 *.mp3
+ffmpeg*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

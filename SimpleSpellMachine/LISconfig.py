@@ -23,9 +23,9 @@ intLettersInterval = 2000
 # Delete sentance after it is spoken
 bolSentanceDeleteAfterSpoken = True
 # Start at A after sentance is spoken
-bolSentanceStartAtAAfterSpoken = True
+bolSentanceStartAtBeginningAfterSpoken = True
 # Start at A after letter choosen
-bolLetterStartAtAAfterLetter = True
+bolLetterStartAtBeginning = True
 
 # system icons
 strImage_ArrowLeft = 'icons/arrow_left.png'
@@ -36,7 +36,9 @@ gTTSenable = True
 gTTSdeactivateSpelling = False
 gTTStempFolder = 'cache/'
 gTTSlanguage = 'de'
-# gTTSenableSpelling = True
+
+# Userinterface Audio output = 'left', 'right', stereo = ''
+UIaudioout = 'left'
 
 # enable console output
 bolConsoleOutput = True
